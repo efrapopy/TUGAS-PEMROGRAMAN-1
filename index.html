@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Biodata Mahasiswa</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-cyan-50 py-10 px-4 flex justify-center">
+  <div class="max-w-md w-full space-y-6">
+
+    <!-- Foto Profile -->
+    <section class="bg-white rounded-xl shadow-lg p-6 text-center">
+      <h2 class="text-lg font-semibold mb-4">Foto Profile</h2>
+      <div class="border-4 border-gray-300 rounded-lg p-1 shadow-md mx-auto w-fit">
+        <img id="fotoProfile" src="" alt="Foto Profile"
+             class="w-48 h-64 object-cover rounded-lg" />
+      </div>
+    </section>
+
+    <!-- Biodata -->
+    <section class="bg-white rounded-xl shadow-lg p-6">
+      <h2 class="text-lg font-semibold mb-4 text-center">Biodata</h2>
+      <div class="space-y-2 text-gray-800">
+        <p><strong>Nama:</strong> <span id="nama"></span></p>
+        <p><strong>NIM:</strong> <span id="nim"></span></p>
+        <p><strong>Jurusan:</strong> Teknik Informatika</p>
+        <p><strong>Fakultas:</strong> Sains dan Teknologi</p>
+        <p><strong>Universitas:</strong> Universitas Raharja</p>
+        <p><strong>Email:</strong> <span id="email"></span></p>
+      </div>
+    </section>
+
+    <!-- Logout Section -->
+    <div class="flex justify-center mt-4">
+      <button id="logoutBtn" class="bg-red-500 text-white px-6 py-2  rounded-lg hover:bg-red-600 transition">
+        Logout
+      </button>
+    </div>
+
+  </div>
+
+  <script>
+    // Ambil data dari localStorage
+    const nama = localStorage.getItem("nama");
+    const nim = localStorage.getItem("nim");
+    const foto = localStorage.getItem("foto");
+
+    // Kalau belum login, redirect ke login.html
+    if (!nama || !nim) {
+      alert("⚠️ Silakan login dulu!");
+      window.location.href = "login.html";
+    } else {
+      document.getElementById("nama").textContent = nama;
+      document.getElementById("nim").textContent = nim;
+      document.getElementById("fotoProfile").src = foto || "https://via.placeholder.com/150";
+      document.getElementById("email").textContent = (nama.split(" ")[0] || "user").toLowerCase() + "@raharja.info";
+    }
+
+    // Tombol logout
+    document.getElementById("logoutBtn").addEventListener("click", function () {
+      localStorage.clear();
+      alert("👋 Logout berhasil!");
+      window.location.href = "login.html";
+    });
+  </script>
+</body>
+</html>
