@@ -1,67 +1,112 @@
 <!DOCTYPE html>
-<html lang="id">
+<html lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Biodata Mahasiswa</title>
+  <title>Login Page</title>
   <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    .popup-enter {
+      opacity: 0;
+      transform: scale(0.9);
+    }
+    .popup-enter-active {
+      opacity: 1;
+      transform: scale(1);
+      transition: all 0.3s ease-out;
+    }
+  </style>
 </head>
-<body class="bg-cyan-50 py-10 px-4 flex justify-center">
-  <div class="max-w-md w-full space-y-6">
-
-    <!-- Foto Profile -->
-    <section class="bg-white rounded-xl shadow-lg p-6 text-center">
-      <h2 class="text-lg font-semibold mb-4">Foto Profile</h2>
-      <div class="border-4 border-gray-300 rounded-lg p-1 shadow-md mx-auto w-fit">
-        <img id="fotoProfile" src="" alt="Foto Profile"
-             class="w-48 h-64 object-cover rounded-lg" />
+<body class="bg-gray-100 flex items-center justify-center h-screen">
+  <div class="bg-white p-8 rounded-xl shadow-lg w-full max-w-md">
+    <h2 class="text-2xl font-bold mb-6 text-center text-gray-800">TUGAS PEMROGRAMAN 1</h2>
+    <form id="loginForm">
+      <div class="mb-4">
+        <label for="username" class="block text-gray-700 mb-2">Username</label>
+        <input type="text" id="username" maxlength="24" required 
+          class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400" />
       </div>
-    </section>
-
-    <!-- Biodata -->
-    <section class="bg-white rounded-xl shadow-lg p-6">
-      <h2 class="text-lg font-semibold mb-4 text-center">Biodata</h2>
-      <div class="space-y-2 text-gray-800">
-        <p><strong>Nama:</strong> <span id="nama"></span></p>
-        <p><strong>NIM:</strong> <span id="nim"></span></p>
-        <p><strong>Jurusan:</strong> Teknik Informatika</p>
-        <p><strong>Fakultas:</strong> Sains dan Teknologi</p>
-        <p><strong>Universitas:</strong> Universitas Raharja</p>
-        <p><strong>Email:</strong> <span id="email"></span></p>
+      <div class="mb-6">
+        <label for="NIM" class="block text-gray-700 mb-2">NIM</label>
+        <input type="text" id="NIM" maxlength="10" required 
+          class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400" />
       </div>
-    </section>
+      <button type="submit" class="w-full bg-blue-500 text-white py-2 rounded-lg hover:bg-blue-600 transition duration-200">
+        Login
+      </button>
+    </form>
+  </div>
 
-    <!-- Logout Section -->
-    <div class="flex justify-center mt-4">
-      <button id="logoutBtn" class="bg-red-500 text-white px-6 py-2  rounded-lg hover:bg-red-600 transition">
-        Logout
+  <!-- Modal Pop Up -->
+  <div id="popup" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden">
+    <div id="popupBox" class="popup-enter bg-white rounded-2xl shadow-2xl p-6 text-center max-w-sm w-full">
+      <div id="popupIcon" class="text-5xl mb-4"></div>
+      <p id="popupMessage" class="text-lg font-semibold mb-6"></p>
+      <button id="popupClose" class="bg-blue-500 text-white px-5 py-2 rounded-lg hover:bg-blue-600 transition hidden">
+        OK
       </button>
     </div>
-
   </div>
 
   <script>
-    // Ambil data dari localStorage
-    const nama = localStorage.getItem("nama");
-    const nim = localStorage.getItem("nim");
-    const foto = localStorage.getItem("foto");
+    const validUsername = "Ishac Kurnia Sandy";
+    const validNIM = "2422416864";
 
-    // Kalau belum login, redirect ke login.html
-    if (!nama || !nim) {
-      alert("⚠️ Silakan login dulu!");
-      window.location.href = "login.html";
-    } else {
-      document.getElementById("nama").textContent = nama;
-      document.getElementById("nim").textContent = nim;
-      document.getElementById("fotoProfile").src = foto || "https://via.placeholder.com/150";
-      document.getElementById("email").textContent = (nama.split(" ")[0] || "user").toLowerCase() + "@raharja.info";
+    const popup = document.getElementById("popup");
+    const popupBox = document.getElementById("popupBox");
+    const popupMessage = document.getElementById("popupMessage");
+    const popupIcon = document.getElementById("popupIcon");
+    const popupClose = document.getElementById("popupClose");
+
+    function showPopup(message, success = false) {
+      popupMessage.textContent = message;
+
+      if (success) {
+        popupIcon.innerHTML = "✅";
+        popupMessage.classList.remove("text-red-600");
+        popupMessage.classList.add("text-green-600");
+
+        // Tampilkan modal + animasi
+        popup.classList.remove("hidden");
+        popupBox.classList.add("popup-enter-active");
+
+        // Setelah 2 detik, redirect
+        setTimeout(() => {
+          window.location.href = "index.html";
+        }, 2000);
+
+      } else {
+        popupIcon.innerHTML = "❌";
+        popupMessage.classList.remove("text-green-600");
+        popupMessage.classList.add("text-red-600");
+
+        // Tampilkan modal + animasi
+        popup.classList.remove("hidden");
+        popupBox.classList.add("popup-enter-active");
+
+        // Tombol OK hanya untuk error
+        popupClose.classList.remove("hidden");
+        popupClose.onclick = () => {
+          popup.classList.add("hidden");
+          popupBox.classList.remove("popup-enter-active");
+        };
+      }
     }
 
-    // Tombol logout
-    document.getElementById("logoutBtn").addEventListener("click", function () {
-      localStorage.clear();
-      alert("👋 Logout berhasil!");
-      window.location.href = "login.html";
+    document.getElementById("loginForm").addEventListener("submit", function (e) {
+      e.preventDefault();
+      const username = document.getElementById("username").value.trim();
+      const NIM = document.getElementById("NIM").value.trim();
+
+      if (username === validUsername && NIM === validNIM) {
+        localStorage.setItem("nama", username);
+        localStorage.setItem("nim", NIM);
+        localStorage.setItem("foto", "https://files.catbox.moe/gjq6yb.jpg");
+
+        showPopup("Login berhasil! Mengalihkan halaman...", true);
+      } else {
+        showPopup("Username atau NIM salah!", false);
+      }
     });
   </script>
 </body>
