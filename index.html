@@ -1,37 +1,82 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="id" class="dark">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Login Page</title>
   <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = { darkMode: 'class' }
+  </script>
   <style>
-    .popup-enter {
-      opacity: 0;
-      transform: scale(0.9);
+    /* Card Fade + Slide */
+    @keyframes fadeSlide {
+      0% { opacity: 0; transform: translateY(30px); }
+      100% { opacity: 1; transform: translateY(0); }
     }
-    .popup-enter-active {
-      opacity: 1;
-      transform: scale(1);
-      transition: all 0.3s ease-out;
+    .animate-fadeSlide { animation: fadeSlide 0.8s ease-out forwards; }
+
+    /* Toggle Bounce */
+    @keyframes toggleBounce {
+      0%   { transform: translateX(0); }
+      60%  { transform: translateX(20px); }
+      80%  { transform: translateX(16px); }
+      100% { transform: translateX(32px); }
     }
+    @keyframes toggleBounceBack {
+      0%   { transform: translateX(32px); }
+      60%  { transform: translateX(12px); }
+      80%  { transform: translateX(16px); }
+      100% { transform: translateX(0); }
+    }
+    .bounce-on  { animation: toggleBounce 0.4s ease forwards; }
+    .bounce-off { animation: toggleBounceBack 0.4s ease forwards; }
+
+    /* Popup Animasi */
+    @keyframes popupShow {
+      0%   { opacity: 0; transform: scale(0.8); }
+      100% { opacity: 1; transform: scale(1); }
+    }
+    @keyframes popupHide {
+      0%   { opacity: 1; transform: scale(1); }
+      100% { opacity: 0; transform: scale(0.8); }
+    }
+    .popup-animate-in  { animation: popupShow 0.3s ease forwards; }
+    .popup-animate-out { animation: popupHide 0.2s ease forwards; }
   </style>
 </head>
-<body class="bg-gray-100 flex items-center justify-center h-screen">
-  <div class="bg-white p-8 rounded-xl shadow-lg w-full max-w-md">
-    <h2 class="text-2xl font-bold mb-6 text-center text-gray-800">TUGAS PEMROGRAMAN 1</h2>
-    <form id="loginForm">
-      <div class="mb-4">
-        <label for="username" class="block text-gray-700 mb-2">Username</label>
-        <input type="text" id="username" maxlength="24" required 
-          class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400" />
+<body class="bg-gradient-to-r from-blue-200 to-cyan-200 dark:from-gray-900 dark:to-gray-800 flex items-center justify-center min-h-screen transition-colors duration-500 ease-in-out">
+  
+  <!-- Toggle Dark Mode Switch -->
+  <div class="fixed top-4 right-4 z-50">
+    <label class="relative inline-flex items-center cursor-pointer">
+      <input type="checkbox" id="toggleDark" class="sr-only peer">
+      <div class="w-14 h-7 bg-gray-300 rounded-full peer dark:bg-gray-700 peer-checked:bg-blue-600 transition-all flex items-center px-1">
+        <span class="text-yellow-400 text-xs">🌞</span>
+        <span class="ml-auto text-gray-100 text-xs">🌙</span>
       </div>
-      <div class="mb-6">
-        <label for="NIM" class="block text-gray-700 mb-2">NIM</label>
-        <input type="text" id="NIM" maxlength="10" required 
-          class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400" />
+      <span id="toggleKnob" class="absolute left-1 top-1 w-5 h-5 bg-white rounded-full shadow-md"></span>
+    </label>
+  </div>
+
+  <!-- Login Card -->
+  <div class="bg-white dark:bg-gray-900 p-8 rounded-2xl shadow-2xl w-full max-w-md animate-fadeSlide transform transition hover:-translate-y-1 hover:shadow-3xl transition-colors duration-500 ease-in-out">
+    <h2 class="text-2xl font-bold mb-6 text-center text-gray-800 dark:text-gray-100">Login Mahasiswa</h2>
+    <form id="loginForm" class="space-y-4">
+      <!-- Username -->
+      <div class="flex items-center border rounded-lg px-3 bg-gray-50 dark:bg-gray-800 transition-colors duration-500">
+        <span class="text-gray-400 dark:text-gray-300">👤</span>
+        <input type="text" id="username" maxlength="24" required placeholder="Nama Lengkap"
+          class="ml-2 w-full px-2 py-2 bg-transparent focus:outline-none text-gray-800 dark:text-gray-100 transition-colors duration-500" />
       </div>
-      <button type="submit" class="w-full bg-blue-500 text-white py-2 rounded-lg hover:bg-blue-600 transition duration-200">
+      <!-- NIM -->
+      <div class="flex items-center border rounded-lg px-3 bg-gray-50 dark:bg-gray-800 transition-colors duration-500">
+        <span class="text-gray-400 dark:text-gray-300">🔑</span>
+        <input type="text" id="NIM" maxlength="10" required placeholder="NIM"
+          class="ml-2 w-full px-2 py-2 bg-transparent focus:outline-none text-gray-800 dark:text-gray-100 transition-colors duration-500" />
+      </div>
+      <!-- Submit -->
+      <button type="submit" class="w-full bg-blue-500 hover:bg-blue-600 text-white py-2 rounded-lg shadow-md transition transform hover:scale-105">
         Login
       </button>
     </form>
@@ -39,7 +84,7 @@
 
   <!-- Modal Pop Up -->
   <div id="popup" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden">
-    <div id="popupBox" class="popup-enter bg-white rounded-2xl shadow-2xl p-6 text-center max-w-sm w-full">
+    <div id="popupBox" class="bg-white dark:bg-gray-900 rounded-2xl shadow-2xl p-6 text-center max-w-sm w-full transition-colors duration-500">
       <div id="popupIcon" class="text-5xl mb-4"></div>
       <p id="popupMessage" class="text-lg font-semibold mb-6"></p>
       <button id="popupClose" class="bg-blue-500 text-white px-5 py-2 rounded-lg hover:bg-blue-600 transition hidden">
@@ -60,35 +105,28 @@
 
     function showPopup(message, success = false) {
       popupMessage.textContent = message;
+      popup.classList.remove("hidden");
+      popupBox.classList.remove("popup-animate-out");
+      popupBox.classList.add("popup-animate-in");
 
       if (success) {
         popupIcon.innerHTML = "✅";
-        popupMessage.classList.remove("text-red-600");
         popupMessage.classList.add("text-green-600");
 
-        // Tampilkan modal + animasi
-        popup.classList.remove("hidden");
-        popupBox.classList.add("popup-enter-active");
-
-        // Setelah 2 detik, redirect
         setTimeout(() => {
-          window.location.href = "index.html";
+          popup.classList.add("hidden");
+          window.location.href = "login.html";
         }, 2000);
 
       } else {
         popupIcon.innerHTML = "❌";
-        popupMessage.classList.remove("text-green-600");
         popupMessage.classList.add("text-red-600");
 
-        // Tampilkan modal + animasi
-        popup.classList.remove("hidden");
-        popupBox.classList.add("popup-enter-active");
-
-        // Tombol OK hanya untuk error
         popupClose.classList.remove("hidden");
         popupClose.onclick = () => {
-          popup.classList.add("hidden");
-          popupBox.classList.remove("popup-enter-active");
+          popupBox.classList.remove("popup-animate-in");
+          popupBox.classList.add("popup-animate-out");
+          setTimeout(() => { popup.classList.add("hidden"); }, 200);
         };
       }
     }
@@ -102,10 +140,37 @@
         localStorage.setItem("nama", username);
         localStorage.setItem("nim", NIM);
         localStorage.setItem("foto", "https://files.catbox.moe/gjq6yb.jpg");
-
-        showPopup("Login berhasil! Mengalihkan halaman...", true);
+        showPopup("Login berhasil! Mengalihkan...", true);
       } else {
         showPopup("Username atau NIM salah!", false);
+      }
+    });
+
+    // Dark mode switch sinkron + bounce
+    const toggleSwitch = document.getElementById("toggleDark");
+    const toggleKnob = document.getElementById("toggleKnob");
+
+    if (localStorage.getItem("theme") === "dark") {
+      document.documentElement.classList.add("dark");
+      toggleSwitch.checked = true;
+      toggleKnob.style.transform = "translateX(32px)";
+    } else {
+      document.documentElement.classList.remove("dark");
+      toggleSwitch.checked = false;
+      toggleKnob.style.transform = "translateX(0)";
+    }
+
+    toggleSwitch.addEventListener("change", () => {
+      if (toggleSwitch.checked) {
+        document.documentElement.classList.add("dark");
+        localStorage.setItem("theme", "dark");
+        toggleKnob.classList.remove("bounce-off");
+        toggleKnob.classList.add("bounce-on");
+      } else {
+        document.documentElement.classList.remove("dark");
+        localStorage.setItem("theme", "light");
+        toggleKnob.classList.remove("bounce-on");
+        toggleKnob.classList.add("bounce-off");
       }
     });
   </script>
