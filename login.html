@@ -1,27 +1,80 @@
 <!DOCTYPE html>
-<html lang="id">
+<html lang="id" class="dark">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Biodata Mahasiswa</title>
   <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = { darkMode: 'class' }
+  </script>
+  <style>
+    /* Card Fade + Slide */
+    @keyframes fadeSlide {
+      0% { opacity: 0; transform: translateY(30px); }
+      100% { opacity: 1; transform: translateY(0); }
+    }
+    .animate-fadeSlide { animation: fadeSlide 0.8s ease-out forwards; }
+
+    /* Toggle Bounce */
+    @keyframes toggleBounce {
+      0%   { transform: translateX(0); }
+      60%  { transform: translateX(20px); }
+      80%  { transform: translateX(16px); }
+      100% { transform: translateX(32px); }
+    }
+    @keyframes toggleBounceBack {
+      0%   { transform: translateX(32px); }
+      60%  { transform: translateX(12px); }
+      80%  { transform: translateX(16px); }
+      100% { transform: translateX(0); }
+    }
+    .bounce-on  { animation: toggleBounce 0.4s ease forwards; }
+    .bounce-off { animation: toggleBounceBack 0.4s ease forwards; }
+
+    /* Popup Animasi */
+    @keyframes popupShow {
+      0%   { opacity: 0; transform: scale(0.8); }
+      100% { opacity: 1; transform: scale(1); }
+    }
+    @keyframes popupHide {
+      0%   { opacity: 1; transform: scale(1); }
+      100% { opacity: 0; transform: scale(0.8); }
+    }
+    .popup-animate-in  { animation: popupShow 0.3s ease forwards; }
+    .popup-animate-out { animation: popupHide 0.2s ease forwards; }
+  </style>
 </head>
-<body class="bg-cyan-50 py-10 px-4 flex justify-center">
-  <div class="max-w-md w-full space-y-6">
+<body class="bg-gradient-to-r from-cyan-200 to-blue-200 dark:from-gray-900 dark:to-gray-800 py-10 px-4 flex justify-center min-h-screen transition-colors duration-500 ease-in-out">
+  
+  <!-- Toggle Dark Mode -->
+  <div class="fixed top-4 right-4 z-50">
+    <label class="relative inline-flex items-center cursor-pointer">
+      <input type="checkbox" id="toggleDark" class="sr-only peer">
+      <div class="w-14 h-7 bg-gray-300 rounded-full peer dark:bg-gray-700 peer-checked:bg-blue-600 transition-all flex items-center px-1">
+        <span class="text-yellow-400 text-xs">🌞</span>
+        <span class="ml-auto text-gray-100 text-xs">🌙</span>
+      </div>
+      <span id="toggleKnob" class="absolute left-1 top-1 w-5 h-5 bg-white rounded-full shadow-md"></span>
+    </label>
+  </div>
+
+  <!-- Content -->
+  <div class="max-w-md w-full space-y-6 animate-fadeSlide transform transition hover:-translate-y-1 hover:shadow-3xl transition-colors duration-500 ease-in-out">
 
     <!-- Foto Profile -->
-    <section class="bg-white rounded-xl shadow-lg p-6 text-center">
-      <h2 class="text-lg font-semibold mb-4">Foto Profile</h2>
-      <div class="border-4 border-gray-300 rounded-lg p-1 shadow-md mx-auto w-fit">
+    <section class="bg-white dark:bg-gray-900 rounded-xl shadow-lg p-6 text-center transition-colors duration-500">
+      <h2 class="text-lg font-semibold mb-4 dark:text-gray-100">Foto Profile</h2>
+      <div class="border-4 border-gray-300 dark:border-gray-600 rounded-lg p-1 shadow-md mx-auto w-fit transition-colors duration-500">
         <img id="fotoProfile" src="" alt="Foto Profile"
              class="w-48 h-64 object-cover rounded-lg" />
       </div>
     </section>
 
     <!-- Biodata -->
-    <section class="bg-white rounded-xl shadow-lg p-6">
-      <h2 class="text-lg font-semibold mb-4 text-center">Biodata</h2>
-      <div class="space-y-2 text-gray-800">
+    <section class="bg-white dark:bg-gray-900 rounded-xl shadow-lg p-6 transition-colors duration-500">
+      <h2 class="text-lg font-semibold mb-4 text-center dark:text-gray-100">Biodata Mahasiswa</h2>
+      <div class="space-y-2 text-gray-800 dark:text-gray-200 text-center">
         <p><strong>Nama:</strong> <span id="nama"></span></p>
         <p><strong>NIM:</strong> <span id="nim"></span></p>
         <p><strong>Jurusan:</strong> Teknik Informatika</p>
@@ -31,25 +84,32 @@
       </div>
     </section>
 
-    <!-- Logout Section -->
+    <!-- Logout -->
     <div class="flex justify-center mt-4">
-      <button id="logoutBtn" class="bg-red-500 text-white px-6 py-2  rounded-lg hover:bg-red-600 transition">
+      <button id="logoutBtn" class="bg-red-500 hover:bg-red-600 text-white px-6 py-2 rounded-lg shadow-md transition transform hover:scale-105">
         Logout
       </button>
     </div>
 
   </div>
 
+  <!-- Modal Pop Up -->
+  <div id="popup" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden">
+    <div id="popupBox" class="bg-white dark:bg-gray-900 rounded-2xl shadow-2xl p-6 text-center max-w-sm w-full transition-colors duration-500">
+      <div id="popupIcon" class="text-5xl mb-4">👋</div>
+      <p id="popupMessage" class="text-lg font-semibold mb-6">Logout berhasil!</p>
+    </div>
+  </div>
+
   <script>
-    // Ambil data dari localStorage
+    // Ambil data localStorage
     const nama = localStorage.getItem("nama");
     const nim = localStorage.getItem("nim");
     const foto = localStorage.getItem("foto");
 
-    // Kalau belum login, redirect ke login.html
     if (!nama || !nim) {
       alert("⚠️ Silakan login dulu!");
-      window.location.href = "login.html";
+      window.location.href = "index.html";
     } else {
       document.getElementById("nama").textContent = nama;
       document.getElementById("nim").textContent = nim;
@@ -57,11 +117,50 @@
       document.getElementById("email").textContent = (nama.split(" ")[0] || "user").toLowerCase() + "@raharja.info";
     }
 
-    // Tombol logout
+    // Logout button
     document.getElementById("logoutBtn").addEventListener("click", function () {
       localStorage.clear();
-      alert("👋 Logout berhasil!");
-      window.location.href = "login.html";
+      const popup = document.getElementById("popup");
+      const popupBox = document.getElementById("popupBox");
+      popup.classList.remove("hidden");
+      popupBox.classList.add("popup-animate-in");
+
+      setTimeout(() => {
+        popupBox.classList.remove("popup-animate-in");
+        popupBox.classList.add("popup-animate-out");
+        setTimeout(() => {
+          popup.classList.add("hidden");
+          window.location.href = "index.html";
+        }, 200);
+      }, 1500);
+    });
+
+    // Dark mode switch sinkron + bounce
+    const toggleSwitch = document.getElementById("toggleDark");
+    const toggleKnob = document.getElementById("toggleKnob");
+
+    if (localStorage.getItem("theme") === "dark") {
+      document.documentElement.classList.add("dark");
+      toggleSwitch.checked = true;
+      toggleKnob.style.transform = "translateX(32px)";
+    } else {
+      document.documentElement.classList.remove("dark");
+      toggleSwitch.checked = false;
+      toggleKnob.style.transform = "translateX(0)";
+    }
+
+    toggleSwitch.addEventListener("change", () => {
+      if (toggleSwitch.checked) {
+        document.documentElement.classList.add("dark");
+        localStorage.setItem("theme", "dark");
+        toggleKnob.classList.remove("bounce-off");
+        toggleKnob.classList.add("bounce-on");
+      } else {
+        document.documentElement.classList.remove("dark");
+        localStorage.setItem("theme", "light");
+        toggleKnob.classList.remove("bounce-on");
+        toggleKnob.classList.add("bounce-off");
+      }
     });
   </script>
 </body>
